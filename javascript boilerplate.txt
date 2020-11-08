@@ -1,0 +1,47 @@
+<--------------------- requiring the files ------------------------->
+require("dotenv").config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const ejs = require("ejs");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const findOrCreate = require("mongoose-findorcreate");
+
+
+<-------------------- setting the app to use the required npm modules --------------------->
+const app = express();
+
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+
+<-------------------- setting up sessions and passport ----------------------->
+app.use(
+  session({
+    secret: "our little secret.",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+<--------------------- connecting mongoose to our app ------------------------>
+mongoose.connect("mongodb://localhost:27017/userdb", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+<---------------------- app.listen ----------------------------.
+app.listen(3000, function () {
+  console.log("Server started on port 3000.");
+});
